@@ -1,0 +1,20 @@
+{
+  "name": "honobrowser",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc && (tsc --watch --preserveWatchOutput & node --watch dist/index.js)",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.1",
+    "hono": "^4.13.2",
+    "playwright": "^1.62.1",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/ws": "^8.18.1",
+    "typescript": "~5.9.3"
+  }
+}

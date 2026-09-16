@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Browser by babel.town</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #090d16;
+      --bg-surface: #111827;
+      --bg-elevated: #1f293d;
+      --bg-hover: #2d3748;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(59, 130, 246, 0.3);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-blue: #3b82f6;
+      --accent-blue-hover: #2563eb;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      touch-action: manipulation;
+    }
+
+    /* Top Application Header */
+    .app-header {
+      height: 44px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      font-size: 13px;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      min-width: 0;
+    }
+
+    .brand-logo-img {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      object-fit: contain;
+      filter: brightness(0) invert(1) drop-shadow(0 0 4px rgba(59, 130, 246, 0.5));
+    }
+
+    .brand-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-title {
+      font-weight: 700;
+    }
+
+    .brand-sub {
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+    .header-link {
+      color: #60a5fa;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.15s;
+    }
+    .header-link:hover {
+      color: #93c5fd;
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-elevated);
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      flex-shrink: 0;
+    }
+
+    .stat-dot.connecting {
+      background: var(--accent-amber);
+      box-shadow: 0 0 8px var(--accent-amber);
+      animation: pulse 1s infinite alternate;
+    }
+
+    .stat-dot.disconnected {
+      background: var(--accent-red);
+      box-shadow: 0 0 8px var(--accent-red);
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    /* Tab Bar */
+    .tab-bar-container {
+      height: 36px;
+      background: #0d1320;
+      display: flex;
+      align-items: flex-end;
+      padding: 0 6px;
+      gap: 4px;
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .tab-bar-container::-webkit-scrollbar { display: none; }
+
+    .tab-item {
+      height: 30px;
+      min-width: 100px;
+      max-width: 200px;
+      flex: 1;
+      background: var(--bg-surface);
+      border-radius: 8px 8px 0 0;
+      border: 1px solid var(--border-color);
+      border-bottom: none;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab-item:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .tab-item.active {
+      background: var(--bg-elevated);
+      color: #fff;
+      border-top: 2px solid var(--accent-blue);
+      font-weight: 500;
+    }
+
+    .tab-favicon {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .tab-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tab-close {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.6;
+      flex-shrink: 0;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .tab-close:hover {
+      opacity: 1;
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--accent-red);
+    }
+
+    .add-tab-btn {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 2px;
+      border-radius: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .add-tab-btn:hover {
+      background: var(--bg-hover);
+      color: #fff;
+    }
+
+    .add-tab-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .add-tab-btn:disabled:hover {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    /* Navigation & Control Toolbar */
+    .browser-toolbar {
+      min-height: 48px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      gap: 6px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 15;
+    }
+
+    .nav-buttons-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-nav {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-nav svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-settings-toggle {
+      display: none;
+    }
+
+    /* Address Bar / Omnibox */
+    .address-bar-wrapper {
+      flex: 1;
+      min-width: 0;
+      height: 34px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .address-bar-wrapper:focus-within {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .lock-icon {
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .address-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      width: 100%;
+    }
+
+    /* Controls Group */
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .select-control, .input-control {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      cursor: pointer;
+    }
+    .select-control:hover { border-color: var(--border-accent); }
+    .select-control optgroup { background: var(--bg-surface); color: var(--text-primary); font-weight: 600; }
+    .select-control option { background: var(--bg-surface); color: var(--text-primary); }
+
+    /* Mobile Controls Drawer Panel */
+    .mobile-controls-panel {
+      display: none;
+      background: #141d2e;
+      border-bottom: 1px solid var(--border-color);
+      padding: 8px 12px;
+      gap: 8px;
+      flex-direction: flex-start;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 14;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-controls-panel.open {
+      display: flex;
+    }
+
+    /* Stream Display Area */
+    .viewport-container {
+      flex: 1;
+      background: #000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      outline: none;
+      touch-action: none;
+    }
+
+    .stream-element {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      cursor: default;
+      touch-action: none;
+    }
+
+    /* Visual Cursor Overlay */
+    .cursor-overlay {
+      position: absolute;
+      pointer-events: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.4);
+      border: 2px solid #fff;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s ease-out;
+      display: none;
+      z-index: 50;
+    }
+
+    /* Modal / Drawer */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 480px;
+      max-width: 90vw;
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .text-input-assistant {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--border-accent);
+      padding: 8px 12px;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      width: 100%;
+    }
+
+    .assistant-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-accent);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      flex: 1;
+      min-width: 0;
+      outline: none;
+      font-size: 16px; /* prevents iOS auto-zoom */
+      font-family: var(--font-sans);
+    }
+
+    .assistant-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-assistant-dismiss {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-assistant-dismiss:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 768px) {
+      .btn-settings-toggle {
+        display: flex;
+      }
+      .controls-group.desktop-only {
+        display: none;
+      }
+      .mobile-controls-panel .select-control {
+        flex: 1;
+        min-width: 120px;
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .desktop-only-text {
+        display: none;
+      }
+      #statusText {
+        display: none;
+      }
+      .header-stats .stat-fps,
+      .header-stats .stat-ping {
+        display: none;
+      }
+      .stat-pill {
+        padding: 4px 6px;
+        font-size: 11px;
+      }
+      .tab-item {
+        min-width: 75px;
+        max-width: 130px;
+        padding: 0 6px;
+        gap: 4px;
+        font-size: 11px;
+      }
+      @media (max-width: 480px) {
+        .header-alert-btn span {
+          display: none;
+        }
+        .header-alert-btn {
+          padding: 3px 6px;
+        }
+      }
+    }
+
+    @media (max-width: 440px) {
+      .btn-nav-optional {
+        display: none;
+      }
+    }
+
+    /* Header Privacy Alert Button */
+    .header-alert-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: var(--font-sans);
+    }
+    .header-alert-btn:hover {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: rgba(239, 68, 68, 0.65);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.25);
+    }
+    .header-alert-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Privacy Warning Modal */
+    .privacy-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      pointer-events: auto;
+    }
+    .privacy-modal-overlay.hidden {
+      display: none !important;
+      pointer-events: none !important;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 24px;
+      position: relative;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: modalSlideIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideIn {
+      from { transform: scale(0.95) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .modal-close-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .modal-icon-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--accent-red);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .modal-body {
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .modal-body strong {
+      color: #fca5a5;
+      font-weight: 600;
+    }
+
+    .modal-footer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-modal-primary {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-modal-primary:hover {
+      background: var(--accent-blue-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <img src="/favicon.svg" alt="logo" class="brand-logo-img">
+      <div class="brand-text">
+        <span class="brand-title">Remote Browser</span>
+        <span class="brand-sub">by <a href="https://babel.town" target="_blank" rel="noopener noreferrer" class="header-link">babel.town</a><span class="desktop-only-text"> - running on Grok Bot</span></span>
+      </div>
+    </div>
+
+    <div class="header-stats">
+      <button id="btnPrivacyAlert" class="header-alert-btn" title="Privacy Alert">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Privacy Warning</span>
+      </button>
+      <div class="stat-pill">
+        <div id="statusDot" class="stat-dot connecting"></div>
+        <span id="statusText">Connecting...</span>
+      </div>
+      <div class="stat-pill stat-fps">
+        <span>FPS:</span>
+        <span id="fpsVal" style="color:#fff;">0</span>
+      </div>
+      <div class="stat-pill stat-ping">
+        <span>PING:</span>
+        <span id="pingVal" style="color:#fff;">0ms</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Privacy Warning Modal -->
+  <div class="privacy-modal-overlay hidden" id="privacyModalOverlay" tabindex="-1">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+      <button class="modal-close-btn" type="button" title="Close modal"
+        onclick="document.getElementById('privacyModalOverlay').classList.add('hidden'); event.stopPropagation();">×</button>
+      <div class="modal-icon-badge">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <h3 class="modal-title" id="privacyModalTitle">Privacy & Security Warning</h3>
+      <p class="modal-body">
+        Please <strong>do not enter or provide any private or sensitive information</strong> (such as passwords, credit card numbers, banking details, or personal credentials) while using this website or remote browser session.
+      </p>
+      <div class="modal-footer">
+        <button class="btn-modal-primary" type="button"
+          onclick="document.getElementById('privacyModalOverlay').classList.add('hidden'); event.stopPropagation();">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar-container" id="tabBar">
+    <!-- Dynamic Tabs rendered here -->
+    <button class="add-tab-btn" id="addTabBtn" title="New Tab">+</button>
+  </div>
+
+  <!-- Browser Navigation Bar -->
+  <div class="browser-toolbar">
+    <div class="nav-buttons-group">
+      <button class="btn-nav" id="btnBack" title="Back">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      </button>
+      <button class="btn-nav btn-nav-optional" id="btnForward" title="Forward">
+        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+      </button>
+      <button class="btn-nav" id="btnReload" title="Reload">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+      <button class="btn-nav btn-nav-optional" id="btnHome" title="Home">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </button>
+    </div>
+
+    <!-- Address Bar -->
+    <div class="address-bar-wrapper">
+      <div class="lock-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+      </div>
+      <input type="text" id="addressInput" class="address-input" placeholder="Type a URL or search query..." autocomplete="off" spellcheck="false">
+    </div>
+
+    <!-- Actions & Desktop Controls -->
+    <div class="toolbar-actions">
+      <button class="btn-nav" id="btnTextInput" title="Text Input Helper">⌨️</button>
+      <button class="btn-nav btn-settings-toggle" id="btnSettingsToggle" title="Settings / Viewport Controls">⚙️</button>
+    </div>
+
+    <div class="controls-group desktop-only" id="desktopControls">
+      <select id="modeSelect" class="select-control" title="Stream Transport Mode">
+        <option value="mjpeg">Stream: MJPEG</option>
+        <option value="websocket">Stream: WebSocket</option>
+      </select>
+
+      <select id="resSelect" class="select-control" title="Viewport Resolution">
+        <optgroup label="Desktop / Landscape">
+          <option value="1280x720" selected>1280 × 720 (720p)</option>
+          <option value="1920x1080">1920 × 1080 (1080p)</option>
+        </optgroup>
+        <optgroup label="Mobile Phone (Portrait)">
+          <option value="720x1280">720 × 1280 (Mobile)</option>
+        </optgroup>
+      </select>
+
+      <select id="fpsSelect" class="select-control" title="Target Frame Rate">
+        <option value="25" selected>25 FPS</option>
+        <option value="15">15 FPS</option>
+        <option value="30">30 FPS</option>
+        <option value="60">60 FPS</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Mobile Controls Drawer Panel -->
+  <div class="mobile-controls-panel" id="mobileControlsPanel">
+    <div style="display: flex; gap: 6px; width: 100%;">
+      <select id="modeSelectMobile" class="select-control" title="Stream Transport Mode">
+        <option value="mjpeg">Stream: MJPEG</option>
+        <option value="websocket">Stream: WebSocket</option>
+      </select>
+
+      <select id="resSelectMobile" class="select-control" title="Viewport Resolution">
+        <optgroup label="Desktop / Landscape">
+          <option value="1280x720" selected>1280 × 720 (720p)</option>
+          <option value="1920x1080">1920 × 1080 (1080p)</option>
+        </optgroup>
+        <optgroup label="Mobile Phone (Portrait)">
+          <option value="720x1280">720 × 1280 (Mobile)</option>
+        </optgroup>
+      </select>
+
+      <select id="fpsSelectMobile" class="select-control" title="Target Frame Rate">
+        <option value="25" selected>25 FPS</option>
+        <option value="15">15 FPS</option>
+        <option value="30">30 FPS</option>
+        <option value="60">60 FPS</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Stream Viewport -->
+  <main class="viewport-container" id="viewportContainer" tabindex="0">
+    <!-- MJPEG Stream Element -->
+    <img id="mjpegStream" class="stream-element" alt="Remote Browser by babel.town" draggable="false">
+
+    <!-- Canvas Stream Element (WebSocket Mode) -->
+    <canvas id="canvasStream" class="stream-element hidden"></canvas>
+
+    <!-- Cursor overlay -->
+    <div id="cursorOverlay" class="cursor-overlay"></div>
+  </main>
+
+  <!-- Text Input Helper Floating Overlay -->
+  <div id="textInputBar" class="text-input-assistant hidden">
+    <button type="button" id="btnDismissText" class="btn-assistant-dismiss" title="Close keyboard">✕</button>
+    <input type="text" id="assistantInput" class="assistant-input" placeholder="Type here → sends to remote browser..." autocomplete="off">
+    <button type="button" id="btnSendText" class="btn-nav" style="width:auto;padding:0 14px;height:38px;background:var(--accent-blue);color:#fff;border-color:transparent;font-size:13px;font-weight:600;font-family:var(--font-sans);" title="Send text">Send</button>
+    <button type="button" id="btnSendEnter" class="btn-nav" style="width:auto;padding:0 12px;height:38px;background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-color);font-size:13px;font-weight:600;font-family:var(--font-sans);" title="Send text + Enter (submit/search)">↵</button>
+  </div>
+
+  <script>
+    // --- Application Logic ---
+    function getOrCreateSessionId() {
+      const urlParams = new URLSearchParams(window.location.search)
+      let id = urlParams.get('sessionId')
+      if (id && id.trim()) return id.trim()
+
+      id = sessionStorage.getItem('honobrowser_session_id')
+      if (!id) {
+        id = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
+        sessionStorage.setItem('honobrowser_session_id', id)
+      }
+      return id
+    }
+
+    function isMobilePhone() {
+      const ua = navigator.userAgent || ''
+      const isMobileUA = /Android.*Mobile|iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua)
+      const isSmallTouch = window.matchMedia && window.matchMedia('(max-width: 768px)').matches && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+      return isMobileUA || isSmallTouch
+    }
+
+    const isMobileClient = isMobilePhone()
+
+    const state = {
+      ws: null,
+      sessionId: getOrCreateSessionId(),
+      vmWidth: isMobileClient ? 720 : 1280,
+      vmHeight: isMobileClient ? 1280 : 720,
+      tabs: [],
+      activeTabId: null,
+      mode: 'mjpeg',
+      lastPingSent: 0,
+      pingMs: 0,
+      isMouseDown: false
+    }
+
+    // DOM Elements
+    const mjpegStream = document.getElementById('mjpegStream')
+    const canvasStream = document.getElementById('canvasStream')
+    const canvasCtx = canvasStream.getContext('2d')
+    const viewportContainer = document.getElementById('viewportContainer')
+    const cursorOverlay = document.getElementById('cursorOverlay')
+    const addressInput = document.getElementById('addressInput')
+    const tabBar = document.getElementById('tabBar')
+    const addTabBtn = document.getElementById('addTabBtn')
+    const statusDot = document.getElementById('statusDot')
+    const statusText = document.getElementById('statusText')
+    const fpsVal = document.getElementById('fpsVal')
+    const pingVal = document.getElementById('pingVal')
+    const modeSelect = document.getElementById('modeSelect')
+    const resSelect = document.getElementById('resSelect')
+    const fpsSelect = document.getElementById('fpsSelect')
+    const modeSelectMobile = document.getElementById('modeSelectMobile')
+    const resSelectMobile = document.getElementById('resSelectMobile')
+    const fpsSelectMobile = document.getElementById('fpsSelectMobile')
+    const btnSettingsToggle = document.getElementById('btnSettingsToggle')
+    const mobileControlsPanel = document.getElementById('mobileControlsPanel')
+    const textInputBar = document.getElementById('textInputBar')
+    const assistantInput = document.getElementById('assistantInput')
+
+    // Initial sync of select controls for default resolution
+    syncSelectControls(`${state.vmWidth}x${state.vmHeight}`, null, null)
+
+    // Set isolated MJPEG stream source
+    mjpegStream.src = `/api/stream?sessionId=${encodeURIComponent(state.sessionId)}`
+    let mjpegRetryTimer = null
+    mjpegStream.onerror = () => {
+      if (mjpegRetryTimer) return
+      console.warn('MJPEG stream connection error. Retrying stream...')
+      mjpegRetryTimer = setTimeout(() => {
+        mjpegRetryTimer = null
+        if (state.mode === 'mjpeg') {
+          mjpegStream.src = `/api/stream?sessionId=${encodeURIComponent(state.sessionId)}&t=${Date.now()}`
+        }
+      }, 3000)
+    }
+
+    // Initialize WebSocket connection
+    function connectWS() {
+      if (state.ws) {
+        try {
+          state.ws.onopen = null
+          state.ws.onclose = null
+          state.ws.onerror = null
+          state.ws.close()
+        } catch (e) {}
+      }
+
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+      const wsUrl = `${protocol}//${window.location.host}/ws?sessionId=${encodeURIComponent(state.sessionId)}`
+
+      state.ws = new WebSocket(wsUrl)
+
+      state.ws.onopen = () => {
+        statusDot.className = 'stat-dot'
+        statusText.textContent = 'Connected'
+        sendPing()
+        if (isMobileClient) {
+          sendWSMessage({ type: 'viewport', width: 720, height: 1280 })
+        }
+      }
+
+      state.ws.onclose = () => {
+        statusDot.className = 'stat-dot disconnected'
+        statusText.textContent = 'Disconnected'
+        setTimeout(connectWS, 2000)
+      }
+
+      state.ws.onerror = () => {
+        statusDot.className = 'stat-dot disconnected'
+        statusText.textContent = 'Error'
+      }
+
+      state.ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data)
+        handleServerMessage(msg)
+      }
+    }
+
+    function sendPing() {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.lastPingSent = Date.now()
+        state.ws.send(JSON.stringify({ type: 'ping', timestamp: state.lastPingSent }))
+      }
+    }
+    setInterval(sendPing, 3000)
+
+    function syncSelectControls(resVal, modeVal, fpsValNum) {
+      if (resVal) {
+        resSelect.value = resVal
+        resSelectMobile.value = resVal
+      }
+      if (modeVal) {
+        modeSelect.value = modeVal
+        modeSelectMobile.value = modeVal
+      }
+      if (fpsValNum) {
+        fpsSelect.value = fpsValNum
+        fpsSelectMobile.value = fpsValNum
+      }
+    }
+
+    function handleServerMessage(msg) {
+      switch (msg.type) {
+        case 'init':
+          if (msg.sessionId) state.sessionId = msg.sessionId
+          const targetSrc = `/api/stream?sessionId=${encodeURIComponent(state.sessionId)}`
+          const targetUrl = new URL(targetSrc, window.location.href).href
+          if (mjpegStream.src !== targetUrl) {
+            mjpegStream.src = targetSrc
+          }
+          state.vmWidth = msg.viewport.width
+          state.vmHeight = msg.viewport.height
+          canvasStream.width = state.vmWidth
+          canvasStream.height = state.vmHeight
+          syncSelectControls(`${state.vmWidth}x${state.vmHeight}`, null, null)
+          renderTabs(msg.tabs, msg.activeTabId)
+          break
+
+        case 'tabs':
+          renderTabs(msg.tabs, msg.activeTabId)
+          break
+
+        case 'pong':
+          state.pingMs = Date.now() - msg.timestamp
+          pingVal.textContent = `${state.pingMs}ms`
+          break
+
+        case 'metrics':
+          fpsVal.textContent = msg.fps
+          break
+
+        case 'cursor':
+          viewportContainer.style.cursor = msg.style || 'default'
+          break
+
+        case 'frame':
+          if (state.mode === 'websocket') {
+            const img = new Image()
+            img.onload = () => {
+              canvasCtx.drawImage(img, 0, 0, canvasStream.width, canvasStream.height)
+            }
+            img.src = 'data:image/jpeg;base64,' + msg.data
+          }
+          break
+      }
+    }
+
+    // Render Tab Bar
+    const MAX_TABS = 5
+    function renderTabs(tabs, activeTabId) {
+      state.tabs = tabs
+      state.activeTabId = activeTabId
+
+      // Remove current tabs except add button
+      const tabElements = tabBar.querySelectorAll('.tab-item')
+      tabElements.forEach(el => el.remove())
+
+      const activeTab = tabs.find(t => t.id === activeTabId)
+      if (activeTab) {
+        if (document.activeElement !== addressInput) {
+          addressInput.value = activeTab.url
+        }
+      }
+
+      tabs.forEach(tab => {
+        const tabEl = document.createElement('div')
+        tabEl.className = `tab-item ${tab.id === activeTabId ? 'active' : ''}`
+        
+        const faviconHtml = tab.favicon
+          ? `<img class="tab-favicon" src="${tab.favicon}" onerror="this.style.display='none'">`
+          : ''
+        tabEl.innerHTML = `
+          ${faviconHtml}
+          <span class="tab-title">${escapeHtml(tab.title || 'New Tab')}</span>
+          <span class="tab-close" data-id="${tab.id}">×</span>
+        `
+
+        tabEl.addEventListener('click', (e) => {
+          if (e.target.classList.contains('tab-close')) {
+            e.stopPropagation()
+            sendWSMessage({ type: 'tab_action', action: 'close', tabId: tab.id })
+          } else {
+            sendWSMessage({ type: 'tab_action', action: 'switch', tabId: tab.id })
+          }
+        })
+
+        tabBar.insertBefore(tabEl, addTabBtn)
+      })
+
+      // Disable + button at tab limit
+      const atLimit = tabs.length >= MAX_TABS
+      addTabBtn.disabled = atLimit
+      addTabBtn.title = atLimit ? `Maximum ${MAX_TABS} tabs allowed` : 'New Tab'
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    }
+
+    function sendWSMessage(msg) {
+      if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+        state.ws.send(JSON.stringify(msg))
+      }
+    }
+
+    // --- Input Coordinate Converter ---
+    function getVMPixelCoords(e) {
+      const streamEl = state.mode === 'mjpeg' ? mjpegStream : canvasStream
+      const rect = streamEl.getBoundingClientRect()
+      
+      const clientX = e.clientX - rect.left
+      const clientY = e.clientY - rect.top
+
+      const x = Math.max(0, Math.min(state.vmWidth, (clientX / rect.width) * state.vmWidth))
+      const y = Math.max(0, Math.min(state.vmHeight, (clientY / rect.height) * state.vmHeight))
+
+      return { x, y }
+    }
+
+    // Attach Mouse Listeners to Viewport
+    viewportContainer.addEventListener('mousemove', (e) => {
+      const { x, y } = getVMPixelCoords(e)
+      sendWSMessage({
+        type: 'mouse',
+        event: 'move',
+        x,
+        y,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    })
+
+    viewportContainer.addEventListener('mousedown', (e) => {
+      viewportContainer.focus()
+      const { x, y } = getVMPixelCoords(e)
+      const buttonMap = ['left', 'middle', 'right']
+      const button = buttonMap[e.button] || 'left'
+
+      sendWSMessage({
+        type: 'mouse',
+        event: 'down',
+        x,
+        y,
+        button,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    })
+
+    viewportContainer.addEventListener('mouseup', (e) => {
+      const { x, y } = getVMPixelCoords(e)
+      const buttonMap = ['left', 'middle', 'right']
+      const button = buttonMap[e.button] || 'left'
+
+      sendWSMessage({
+        type: 'mouse',
+        event: 'up',
+        x,
+        y,
+        button,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    })
+
+    viewportContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault()
+      const { x, y } = getVMPixelCoords(e)
+      sendWSMessage({
+        type: 'mouse',
+        event: 'contextmenu',
+        x,
+        y,
+        button: 'right'
+      })
+    })
+
+    viewportContainer.addEventListener('wheel', (e) => {
+      e.preventDefault()
+      const { x, y } = getVMPixelCoords(e)
+      sendWSMessage({
+        type: 'mouse',
+        event: 'wheel',
+        x,
+        y,
+        deltaX: e.deltaX,
+        deltaY: e.deltaY,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    }, { passive: false })
+
+    // --- Touch Event Handlers for Mobile ---
+    let lastTouchPos = null
+    let touchStartPos = null   // used to detect tap vs scroll
+    let touchMoved = false
+    const SCROLL_SCALE = 2.0   // pixels-in → scroll-units-out multiplier
+
+    function getTouchVMPixelCoords(touch) {
+      const streamEl = state.mode === 'mjpeg' ? mjpegStream : canvasStream
+      const rect = streamEl.getBoundingClientRect()
+      const clientX = touch.clientX - rect.left
+      const clientY = touch.clientY - rect.top
+      const x = Math.max(0, Math.min(state.vmWidth,  (clientX / rect.width)  * state.vmWidth))
+      const y = Math.max(0, Math.min(state.vmHeight, (clientY / rect.height) * state.vmHeight))
+      return { x, y }
+    }
+
+    viewportContainer.addEventListener('touchstart', (e) => {
+      e.preventDefault()
+      viewportContainer.focus()
+
+      if (e.touches.length === 1) {
+        const touch = e.touches[0]
+        const { x, y } = getTouchVMPixelCoords(touch)
+        lastTouchPos   = { x, y, clientX: touch.clientX, clientY: touch.clientY }
+        touchStartPos  = { x, y, clientX: touch.clientX, clientY: touch.clientY }
+        touchMoved     = false
+        // Move cursor to touch position
+        sendWSMessage({ type: 'mouse', event: 'move', x, y,
+          modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+      } else if (e.touches.length === 2) {
+        const t1 = e.touches[0]
+        const t2 = e.touches[1]
+        lastTouchPos = { x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 }
+        touchMoved = true  // suppress tap on lift
+      }
+    }, { passive: false })
+
+    viewportContainer.addEventListener('touchmove', (e) => {
+      e.preventDefault()
+
+      if (e.touches.length === 1 && lastTouchPos) {
+        const touch = e.touches[0]
+        const { x, y } = getTouchVMPixelCoords(touch)
+
+        // Delta in client pixels → scale to scroll units
+        const deltaX = (lastTouchPos.clientX - touch.clientX) * SCROLL_SCALE
+        const deltaY = (lastTouchPos.clientY - touch.clientY) * SCROLL_SCALE
+
+        if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
+          touchMoved = true
+          // Move cursor to touch point then scroll
+          sendWSMessage({ type: 'mouse', event: 'move', x, y,
+            modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+          sendWSMessage({ type: 'mouse', event: 'wheel', x, y,
+            deltaX, deltaY,
+            modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+        }
+
+        lastTouchPos = { x, y, clientX: touch.clientX, clientY: touch.clientY }
+
+      } else if (e.touches.length === 2 && lastTouchPos) {
+        // Two-finger pinch → scroll
+        const t1 = e.touches[0]
+        const t2 = e.touches[1]
+        const currentY = (t1.clientY + t2.clientY) / 2
+        const currentX = (t1.clientX + t2.clientX) / 2
+        const deltaX = (lastTouchPos.x - currentX) * 2.5
+        const deltaY = (lastTouchPos.y - currentY) * 2.5
+        const { x, y } = getTouchVMPixelCoords(t1)
+        sendWSMessage({ type: 'mouse', event: 'wheel', x, y,
+          deltaX, deltaY,
+          modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+        lastTouchPos = { x: currentX, y: currentY }
+      }
+    }, { passive: false })
+
+    viewportContainer.addEventListener('touchend', (e) => {
+      e.preventDefault()
+      const touch = e.changedTouches[0]
+      const { x, y } = getTouchVMPixelCoords(touch)
+
+      const wasTap = !touchMoved
+
+      if (wasTap) {
+        // Short tap → click
+        sendWSMessage({ type: 'mouse', event: 'down', x, y, button: 'left',
+          modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+        sendWSMessage({ type: 'mouse', event: 'up',   x, y, button: 'left',
+          modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+      }
+
+      lastTouchPos  = null
+      touchStartPos = null
+      touchMoved    = false
+
+      // Auto-show keyboard input bar on tap (mobile only).
+      // The viewport is a canvas/image so the OS can't detect remote input fields.
+      // Focusing a real <input> in our DOM triggers the OS keyboard — same pattern
+      // used by Chrome Remote Desktop, Parsec, and all mobile remote desktop clients.
+      if (wasTap && isMobileClient && textInputBar.classList.contains('hidden')) {
+        showTextBar()
+      }
+    }, { passive: false })
+
+    // --- Keyboard Handler ---
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement === addressInput || document.activeElement === assistantInput) {
+        return
+      }
+
+      if (['Tab', 'Backspace', 'F5'].includes(e.key) || (e.ctrlKey && ['r', 'w', 't'].includes(e.key.toLowerCase()))) {
+        e.preventDefault()
+      }
+
+      sendWSMessage({
+        type: 'key',
+        event: 'down',
+        key: e.key,
+        code: e.code,
+        keyCode: e.keyCode,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    })
+
+    window.addEventListener('keyup', (e) => {
+      if (document.activeElement === addressInput || document.activeElement === assistantInput) return
+
+      sendWSMessage({
+        type: 'key',
+        event: 'up',
+        key: e.key,
+        code: e.code,
+        keyCode: e.keyCode,
+        modifiers: { ctrl: e.ctrlKey, shift: e.shiftKey, alt: e.altKey, meta: e.metaKey }
+      })
+    })
+
+    // Navigation & Toolbar Buttons
+    document.getElementById('btnBack').addEventListener('click', () => sendWSMessage({ type: 'nav_action', action: 'back' }))
+    document.getElementById('btnForward').addEventListener('click', () => sendWSMessage({ type: 'nav_action', action: 'forward' }))
+    document.getElementById('btnReload').addEventListener('click', () => sendWSMessage({ type: 'nav_action', action: 'reload' }))
+    document.getElementById('btnHome').addEventListener('click', () => sendWSMessage({ type: 'nav_action', action: 'home' }))
+    addTabBtn.addEventListener('click', () => sendWSMessage({ type: 'tab_action', action: 'create', url: 'about:blank' }))
+
+    addressInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const url = addressInput.value.trim()
+        if (url) {
+          sendWSMessage({ type: 'navigate', url })
+          viewportContainer.focus()
+        }
+      }
+    })
+
+    // Mode Switcher (MJPEG vs WS Canvas)
+    function handleModeChange(val) {
+      state.mode = val
+      syncSelectControls(null, state.mode, null)
+      if (state.mode === 'mjpeg') {
+        mjpegStream.classList.remove('hidden')
+        canvasStream.classList.add('hidden')
+      } else {
+        mjpegStream.classList.add('hidden')
+        canvasStream.classList.remove('hidden')
+      }
+      sendWSMessage({ type: 'stream_config', mode: state.mode })
+    }
+
+    modeSelect.addEventListener('change', (e) => handleModeChange(e.target.value))
+    modeSelectMobile.addEventListener('change', (e) => handleModeChange(e.target.value))
+
+    // Resolution Selector
+    function handleResChange(val) {
+      const [w, h] = val.split('x').map(Number)
+      state.vmWidth = w
+      state.vmHeight = h
+      canvasStream.width = w
+      canvasStream.height = h
+      syncSelectControls(val, null, null)
+      sendWSMessage({ type: 'viewport', width: w, height: h })
+    }
+
+    resSelect.addEventListener('change', (e) => handleResChange(e.target.value))
+    resSelectMobile.addEventListener('change', (e) => handleResChange(e.target.value))
+
+    // FPS Selector
+    function handleFpsChange(val) {
+      syncSelectControls(null, null, val)
+      sendWSMessage({ type: 'stream_config', fps: Number(val) })
+    }
+
+    fpsSelect.addEventListener('change', (e) => handleFpsChange(e.target.value))
+    fpsSelectMobile.addEventListener('change', (e) => handleFpsChange(e.target.value))
+
+    // Mobile Settings Toggle
+    btnSettingsToggle.addEventListener('click', () => {
+      mobileControlsPanel.classList.toggle('open')
+    });
+
+    // --- Text Input Assistant ---
+    // Stop touch events from propagating to viewport handlers
+    ;['touchstart', 'touchmove', 'touchend', 'mousedown', 'mouseup'].forEach(evtName => {
+      if (textInputBar) {
+        textInputBar.addEventListener(evtName, (e) => { e.stopPropagation() })
+      }
+    });
+
+    function showTextBar() {
+      textInputBar.classList.remove('hidden')
+      // Small delay so DOM renders first; focus() then triggers the OS keyboard
+      setTimeout(() => assistantInput.focus(), 80)
+    }
+
+    function hideTextBar() {
+      assistantInput.blur()
+      textInputBar.classList.add('hidden')
+    }
+
+    function sendTextInput() {
+      const text = assistantInput.value
+      if (text) {
+        sendWSMessage({ type: 'key', event: 'text', text, key: '' })
+        assistantInput.value = ''
+      }
+    }
+
+    function sendEnterKey() {
+      sendWSMessage({ type: 'key', event: 'down', key: 'Enter', code: 'Enter', keyCode: 13,
+        modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+      sendWSMessage({ type: 'key', event: 'up',   key: 'Enter', code: 'Enter', keyCode: 13,
+        modifiers: { ctrl: false, shift: false, alt: false, meta: false } })
+    }
+
+    // ⌨️ toolbar button: toggle
+    document.getElementById('btnTextInput').addEventListener('click', (e) => {
+      e.stopPropagation()
+      if (textInputBar.classList.contains('hidden')) {
+        showTextBar()
+      } else {
+        hideTextBar()
+      }
+    })
+
+    // ✕ dismiss button
+    document.getElementById('btnDismissText').addEventListener('click', (e) => {
+      e.stopPropagation()
+      hideTextBar()
+    })
+
+    // Send button (text only, no Enter)
+    document.getElementById('btnSendText').addEventListener('click', (e) => {
+      e.stopPropagation()
+      sendTextInput()
+      hideTextBar()
+    })
+
+    // ↵ button: send text then forward Enter key to remote (triggers search/submit)
+    document.getElementById('btnSendEnter').addEventListener('click', (e) => {
+      e.stopPropagation()
+      sendTextInput()
+      sendEnterKey()
+      hideTextBar()
+    })
+
+    // Physical Enter key in the input: send text + forward Enter to remote
+    assistantInput.addEventListener('keydown', (e) => {
+      e.stopPropagation()
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        sendTextInput()
+        sendEnterKey()
+        hideTextBar()
+      } else if (e.key === 'Escape') {
+        hideTextBar()
+      }
+    })
+
+    // --- Privacy Alert Modal Handlers ---
+    const btnPrivacyAlert = document.getElementById('btnPrivacyAlert')
+    const privacyModalOverlay = document.getElementById('privacyModalOverlay')
+
+    function openPrivacyModal(e) {
+      if (e) e.stopPropagation()
+      if (privacyModalOverlay) {
+        privacyModalOverlay.classList.remove('hidden')
+      }
+    }
+
+    function closePrivacyModal() {
+      if (privacyModalOverlay) {
+        privacyModalOverlay.classList.add('hidden')
+      }
+    }
+
+    if (btnPrivacyAlert) {
+      btnPrivacyAlert.addEventListener('click', openPrivacyModal)
+    }
+
+    // Backdrop click closes modal
+    if (privacyModalOverlay) {
+      privacyModalOverlay.addEventListener('click', (e) => {
+        if (e.target === privacyModalOverlay) closePrivacyModal()
+      })
+      // Stop mouse/touch events from leaking through to the canvas below
+      ;['mousedown', 'mouseup', 'touchstart', 'touchend', 'pointerdown', 'pointerup'].forEach(evtName => {
+        privacyModalOverlay.addEventListener(evtName, (e) => e.stopPropagation())
+      })
+    }
+
+    // Esc closes modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && privacyModalOverlay && !privacyModalOverlay.classList.contains('hidden')) {
+        closePrivacyModal()
+      }
+    })
+
+    // Start App
+    connectWS()
+  </script>
+</body>
+</html>
